@@ -1,0 +1,57 @@
+; Set the SendMode to Input to allow mouse and keyboard interaction
+SendMode, Input
+
+periscope(x)
+{
+    url := "https://toolbox.teslamotors.com/tools/periscope?productId=" . x
+    chromePath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" ; Updated path to Chrome executable
+    Run, % chromePath " --new-window " url
+    Return
+}
+
+^+P::  ; Periscope Search
+{
+    BlockInput, On               ; Blocking user from continuing to press stupid buttons.
+    prevClipboard := Clipboard   ; prevClipboard to store stuff you had earlier, like if you copied something before.
+    Clipboard := ""              ; Set current clipboard = to nothing
+    Send, ^c                     ; AHK Presses CTRL C or Copy
+    BlockInput, Off              ; Unblock user control
+    ClipWait, 2
+    If !ErrorLevel               ; If there's no error, execute
+    {
+        searchQuery := Clipboard ; Storing current value in clipboard
+        periscope(searchQuery)   ; Pushing searchQuery to the function periscope
+        ; Wait for 2 seconds (adjust the time as needed)
+        Sleep, 2000
+
+        ; Simulate moving the active window to the left screen
+        SendInput, {LWin down}{Shift down}{Left}{LWin up}{Shift up}
+        Sleep, 500 ; Wait for a short duration
+
+        ; Left-click at the specified mouse position
+        Click, 115, 241
+        Sleep, 500 ; Wait for a short duration
+
+        ; Press Ctrl + F
+        SendInput, ^f
+        Sleep, 500 ; Wait for a short duration
+
+        ; Type the search term "Request Logs"
+        SendInput, Request Logs
+        Sleep, 500 ; Wait for a short duration
+
+        ; Press Escape key
+        SendInput, {Esc}
+        Sleep, 500 ; Wait for a short duration
+
+        ; Press Shift + Enter
+        SendInput, +{Enter}
+        Sleep, 500 ; Wait for a short duration
+
+        ; Press Tab
+        SendInput, {Tab down}{Tab up}
+        Sleep, 500 ; Wait for a short duration
+    }
+    Clipboard := prevClipboard   ; Return clipboard to the previous value
+    Return
+}
