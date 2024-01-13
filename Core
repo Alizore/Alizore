@@ -1,0 +1,777 @@
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+; #Warn  ; Enable warnings to assist with detecting common errors.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+^j::
+MsgBox, Wow!
+MsgBox, There are
+Run, notepad.exe
+WinActivate, Untitled - Notepad
+WinWaitActive, Untitled - Notepad
+Send, 7 lines{!}{Enter}
+SendInput, inside the CTRL{+}J hotkey.
+return
+
+:*:zxfb::
+(
+Hello! It was a pleasure doing business with you! I just left positive feedback on our transaction and I hope you can take a minute and do the same if you haven’t already.
+
+Also since you have some interest in hobby cards, it would mean a ton to me if you checked out my YouTube channel! We do box breaks, pack battles, and just have a good time talking cards. https://youtube.com/c/CLECardGuys
+
+Thank you again for a great transaction!
+)
+
+
+^+C::
+Run, notepad.exe
+WinActivate, Untitled - Notepad
+WinWaitActive, Untitled - Notepad
+Send, C-Configuration {Enter}
+SendInput, A-Availability/Timeline {Enter}
+SendInput, R-Registration {Enter}
+SendInput, P-Payment Method {Enter}
+SendInput, E-EV Charging Method {Enter}
+SendInput, E-Energy Product Interest {Enter}
+SendInput, T-Trade in {Enter}
+return
+
+^+4::
+Run, notepad.exe
+WinActivate, Untitled - Notepad
+WinWaitActive, Untitled - Notepad
+Send, Why not now? {Enter}
+SendInput, What/When is the customer doing next? {Enter}
+SendInput, What/When is my next step? {Enter}
+SendInput, Configuration and payment type? {Enter} 
+return
+
+
+
+searchSMP(x) ; SMP Search
+
+{
+ Run, https://sales-prd.tesla.com/globalsearch/lms/%x%
+ Return
+}
+
+^+S::  
+
+{
+ BlockInput, On                       
+ prevClipboard = %clipboard%         
+ clipboard =                         
+ Send, ^c                            
+ BlockInput, Off                    
+ ClipWait, 2
+ If ErrorLevel = 0                   
+	{
+	searchQuery=%clipboard%        
+  	searchSMP(SearchQuery) 
+ 	}
+ Clipboard = %prevClipboard%          
+ return
+ 
+}
+
+searchNewInventory(x) ; New Inventory Search
+
+{
+Run, https://www.tesla.com/new/%x%?redirect=no
+Return
+}
+
+^+N::  
+
+{
+BlockInput, On                       
+ prevClipboard = %clipboard%         
+ clipboard =                         
+ Send, ^c                            
+ BlockInput, Off                    
+ ClipWait, 2
+If ErrorLevel = 0                   
+                {
+                searchQuery=%clipboard%        
+                searchNewInventory(SearchQuery) 
+                }
+Clipboard = %prevClipboard%          
+ return
+
+}
+
+searchUsedInventory(x) ; Used Inventory Search
+
+{
+Run, https://www.tesla.com/used/%x%?redirect=no
+Return
+}
+
+^+U::  
+
+{
+BlockInput, On                       
+ prevClipboard = %clipboard%         
+ clipboard =                         
+ Send, ^c                            
+ BlockInput, Off                    
+ ClipWait, 2
+If ErrorLevel = 0                   
+                {
+                searchQuery=%clipboard%        
+                searchUsedInventory(SearchQuery) 
+                }
+Clipboard = %prevClipboard%          
+ return
+
+}
+
+searchInternalInventory(x) ; Internal Inventory Search
+
+{
+Run, https://inventory.tesla.com/inventory?VIN=%x%
+Return
+}
+
+^+l::  
+
+{
+Run, Tesla Service please respond in APP1.msg
+
+ return
+}
+
+GoogleSearch(x) ; GoogleSearch
+
+{
+Run, https://www.google.com/search?q=%x%
+Return
+}
+
+^+O::  
+
+{
+BlockInput, On                       
+ prevClipboard = %clipboard%         
+ clipboard =                         
+ Send, ^c                            
+ BlockInput, Off                    
+ ClipWait, 2
+If ErrorLevel = 0                   
+            {
+            searchQuery=%clipboard%        
+            GoogleSearch(SearchQuery) 
+            }
+Clipboard = %prevClipboard%          
+ return
+
+}
+
+LogisticsSearch(x) ; LogisticsSearch
+
+{
+Run, https://warpdrive.teslamotors.com/WarpDelivery/Vehicles/Details?VIN=%x%
+Return
+}
+
+^+'::  
+
+{
+BlockInput, On                       
+ prevClipboard = %clipboard%         
+ clipboard =                         
+ Send, ^c                            
+ BlockInput, Off                    
+ ClipWait, 2
+If ErrorLevel = 0                   
+            {
+            searchQuery=%clipboard%        
+            LogisticsSearch(SearchQuery) 
+            }
+Clipboard = %prevClipboard%          
+ return
+
+}
+
+GarageSearch(x) ; GarageSearch
+
+{
+Run, https://garage.vn.teslamotors.com/vehicles/%x%
+Return
+}
+
+^+G::  
+
+{
+BlockInput, On                       
+ prevClipboard = %clipboard%         
+ clipboard =                         
+ Send, ^c                            
+ BlockInput, Off                    
+ ClipWait, 2
+If ErrorLevel = 0                   
+            {
+            searchQuery=%clipboard%        
+            GarageSearch(SearchQuery) 
+            }
+Clipboard = %prevClipboard%          
+ return
+
+}
+
+
+; Set the SendMode to Input to allow mouse and keyboard interaction
+SendMode, Input
+
+periscope(x)
+{
+    url := "https://toolbox.teslamotors.com/tools/periscope?productId=" . x
+    chromePath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" ; Updated path to Chrome executable
+    Run, % chromePath " --new-window " url
+    Return
+}
+
+
+^+P::  ; Periscope Search
+{
+    BlockInput, On               ; Blocking user from continuing to press stupid buttons.
+    prevClipboard := Clipboard   ; prevClipboard to store stuff you had earlier, like if you copied something before.
+    Clipboard := ""              ; Set current clipboard = to nothing
+    Send, ^c                     ; AHK Presses CTRL C or Copy
+    BlockInput, Off              ; Unblock user control
+    ClipWait, 2
+    If !ErrorLevel               ; If there's no error, execute
+    {
+        searchQuery := Clipboard ; Storing current value in clipboard
+        periscope(searchQuery)   ; Pushing searchQuery to the function periscope
+        ; Wait for 2 seconds (adjust the time as needed)
+        Sleep, 2000
+
+        ; Simulate moving the active window to the left screen
+        SendInput, {LWin down}{Shift down}{Left}{LWin up}{Shift up}
+        Sleep, 2500 ; Wait for a short duration
+
+        ; Left-click at the specified mouse position
+        Click, 115, 241
+        Sleep, 100 ; Wait for a short duration
+
+        ; Press Tab
+        SendInput, {Tab down}{Tab up}
+        Sleep, 100 ; Wait for a short duration
+
+        ; Press Shift + Enter
+        SendInput, +{Enter}
+        Sleep, 300 ; Wait for a short duration
+		
+		; Left-click at the specified mouse position
+        Click, 115, 241
+        Sleep, 100 ; Wait for a short duration
+
+        ; Go to specified screen coordinates
+        CoordMode, Mouse, Screen
+        MouseMove, 625, 217
+
+        ; Left-click
+        Click
+        Sleep, 500 ; Wait for a short duration
+		
+		; Press Shift + Enter
+        SendInput, +{Enter}
+		
+    }
+    Clipboard := prevClipboard   ; Return clipboard to the previous value
+    Return
+}
+
+toolbox(m)
+{
+    url := "https://toolbox.teslamotors.com/tools/periscope?productId=" . m
+    chromePath := "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" ; Updated path to Chrome executable
+    Run, % chromePath " --new-window " url
+    Return
+}
+
+
+^+m::  ; toolbox Search
+{
+    BlockInput, On               ; Blocking user from continuing to press stupid buttons.
+    prevClipboard := Clipboard   ; prevClipboard to store stuff you had earlier, like if you copied something before.
+    Clipboard := ""              ; Set current clipboard = to nothing
+    Send, ^c                     ; AHK Presses CTRL C or Copy
+    BlockInput, Off              ; Unblock user control
+    ClipWait, 2
+    If !ErrorLevel               ; If there's no error, execute
+    {
+        searchQuery := Clipboard ; Storing current value in clipboard
+        periscope(searchQuery)   ; Pushing searchQuery to the function periscope
+        ; Wait for 2 seconds (adjust the time as needed)
+        Sleep, 1200
+		
+		}
+    Clipboard := prevClipboard   ; Return clipboard to the previous value
+    Return
+}
+		
+		
+
+
+
+
+:*:zxstart::
+(
+Hello, this is a courtesy message from Tesla's Virtual Service Team. We are preparing your upcoming appointment with the Tesla Service Team. If you have any questions about your appointment or any additional concerns, feel free to use this channel to communicate with us. Please note 72 hours before appointment no other concerns can be added to this appointment.
+)
+
+:*:zxtabs::
+(
+Hello ___, it's Josh from Tesla service. After reviewing the photos you submitted I think it would be best for you to connect with a local Tesla approved body shop. You can find a list here - https://www.tesla.com/support/collision-support If you go into the service center they will tell you the same, so I don't want to see you waste your time with extra steps. Since this repair is outside the scope of the service center, this appointment will be closed shortly.
+)
+
+:*:zxfutext::
+(
+Hello! This is Josh from Tesla. I just tried giving you a call regarding your test drive request/trade-in interest. When you're free to discuss further please text this number back or email me at joludwig@tesla.com with any questions you have!
+)
+
+:*:zxisdrivemail::
+(
+Hi ___,
+
+This is Josh from Tesla. Hope you and your loved ones have been well during these times. Thank you for your interest in test driving with us. 
+
+Please give your local store a call at _____ (option 3 for sales) to get your test drive scheduled. We look forward to hosting you soon.
+
+Best regards,
+)
+
+:*:zxistrademail::
+(
+Hi ___,
+
+This is Josh from Tesla. Hope you and your loved ones have been well during these times. Thank you for your interest in Tesla.
+
+I tried giving you a call earlier today in regard to your trade-in interest. If you have not yet received your offer, you will get that in the next 48 hours via email. Feel free to reach out to your local store at _____ (option 3 for sales) with any other questions you have about Tesla ownership! 
+
+Best regards,
+)
+
+:*:zxclose::
+(
+Since we have not received a response, the system will end the chat. Please feel free to chat back in if you have any questions. Have an electric day!
+)
+
+:*:zxconfiginterest::
+(
+What vehicle trim and options are you interested in?
+)
+
+:*:zxcar::
+(
+I can have a vehicle specialist reach out who will go over the best available options in your area and discuss any incentives you may qualify for!
+)
+
+:*:zxenergy::
+(
+I can have an energy specialist reach out to help design the perfect solar solution for your specific home and discuss the best payment options for you!
+) 
+
+:*:zxcs::
+(
+This would be resolved by our Customer Support Team. They are currently closed for the weekend. Their hours of operation are from 4 AM – 9 PM PST Monday- Friday. They will be available via chat on Monday morning.
+)
+
+:*:zxexpand::
+(
+We're constantly looking to expand our markets, however right now, we don't have a market there but we're excited to grow internationally in the future!
+)
+
+:*:zxnews::
+(
+Have you signed up for the Tesla newsletter so you can stay up to date on all things Tesla?
+) 
+
+ :*:zxwhatelse::
+(
+What else is important for me to pass along to your specialist?
+)
+
+:*:zxaddress::
+(
+What is your address so I can see if we service your area?
+)
+
+:*:zxcontact::
+(
+Hi ___, it's Josh from Tesla. Thank you for your time today! If you have any other questions please feel free to text me back here, email me at joludwig@tesla.com, or give us a call at 1-888-518-3752.  
+)
+
+:*:zxanythingelse::
+(
+Is there anything else I can assist with today?
+)
+
+:*:zxhi:: 
+(
+Hello ___, it's Josh from Tesla service. We're working on preparing for your upcoming appointment and wanted to get some clarity on your concern.  
+)
+
+:*:zxbye::
+(
+Thank you for your support, and have a great day! Stay safe!
+)
+
+:*:zxdcsend::
+(
+It looks like we may have disconnected, but since you had specific questions and provided an email, I’d be happy to have a specialist follow up with you!
+)
+
+:*:zxrate::
+(
+Financing options will vary depending on your area. We partner with multiple banks to provide competitive rates! Specific rates will be determined by your credit application. I can have a specialist reach out to discuss the financing options in your area!
+)
+
+:*:zxstill::
+(
+Tesla | Still Interested?
+)
+
+:*:zxwelcome::
+(
+Tesla | Welcome to the Family!
+)
+
+:*:zxwehere::
+(
+Tesla | We're Here When You're Ready
+)
+
+:*:zxtdwaiver::
+(
+Hello ____, 
+
+It’s Josh from Tesla. Attached to this email is the waiver we need you to fill out and return prior to your drive. We will need you to return this in order for you to drive. 
+
+As we will not be able to accompany you on your drive, please be sure to watch these videos to make the most of your 30 minutes with the vehicle. 
+https://www.tesla.com/support/model-s-videos 
+https://www.tesla.com/support/model-x-videos 
+https://www.tesla.com/support/model-3-videos 
+https://www.tesla.com/support/model-y-videos 
+
+When you arrive please come into our showroom and let whoever greets you know you are here for your drive. They will give you they key and point you to the vehicle you’ll be driving. Since we have a full drive schedule and need to sanitize cars between drives, you will have 30 minutes from the start of your scheduled appointment time in the car. 
+
+We look forward to having you in to experience the Model S/X/3/Y! 
+
+Best regards, 
+
+Josh Ludwig  | Senior Tesla Advisor | Sales
+5180 Mayfield Rd, Lyndhurst, OH 44124
+p. (440) 461-1016 Option 3 | joludwig@tesla.com
+)
+
+:*:zxlose::
+(
+Tesla | Did We Lose You?
+)
+
+:*:zxcpeet::
+(
+C-Configuration
+A-Availability/Timeline
+R-Registration
+P-Payment Method
+E-EV Charging Method
+E-Energy Product Interest
+T-Trade in
+)
+
+:*:zxtdr::
+(
+Tesla | Test Drive Request
+)
+
+:*:zxtiq::
+(
+Tesla | Trade In Quote
+)
+
+:*:zxyucd::
+(
+Tesla | Your Upcoming Drive
+)
+
+:*:zxncn::
+(
+No Call Necessary
+)
+
+:*:zxpdc::
+(
+Pre-Drive Call
+)
+
+:*:zxdwly::
+(
+Hello ____,
+
+It’s Josh from Tesla. I know you were interested in Tesla ownership, but we haven't had a chance to touch base on your next steps. Please let me know if you have decided to go in another direction or if the timing isn’t right, as I don't want to be a bother. 
+
+Best regards,
+)
+
+:*:zxsau::
+(
+storeassigneduser
+)
+
+:*:zxjl::
+(
+joludwig
+)
+
+:*:zxlosttext::
+(
+Hello! It's Josh from Tesla. Are you still considering Tesla ownership at this time? Please let me know if you've decided to go in another direction as I don't want to be a bother. 
+)
+
+:*:zxconsult::
+(
+Hello! This is Josh from Tesla reaching out regarding your test drive request. Currently, due to demand, we have sold through all our available vehicles and are unable to conduct test drives. However, we are offering virtual or in-person consultations with an advisor for those in the immediate market. Current delivery timelines will vary depending on which Model you're interested in. I'd love to support your journey with us. Please reply "YES" if you'd like to learn more about our consultations or "WAIT" if you'd prefer to wait to order for when our test drives resume closer to the end of October.
+)
+
+:*:zxtdtext::
+(
+Hello! This is Josh from Tesla. I hope you are doing well. Thank you for your interest in setting up a test drive with us. I'm  planning to give you a call later today to see if we can get you scheduled! Look forward to speaking with you soon. 
+)
+
+:*:zxtradetext::
+(
+Hello! This is Josh from Tesla. I hope you are doing well. Thank you for your interest in trading in your vehicle with us. I'm planning to give you a call later today to go over that process and answer any questions you may have. Look forward to speaking with you soon. 
+)
+
+:*:zxdrivetext::
+(
+Hello! This is Josh from Tesla. I hope you are doing well. Thank you for setting up a test drive with us! I'm planning to give you a call later today to discuss the details of your upcoming drive and answer any questions you may have. Look forward to speaking with you soon. 
+)
+
+:*:zx2touch::
+(
+Hi! It's Josh from Tesla. I tried giving you a call recently about your interest in Tesla ownership. If you have any other questions please feel free to text them to me here or email me at joludwig@tesla.com and I'd be happy to assist! 
+)
+
+^d::
+SendInput TD Request - Call %A_MM%/%A_DD% ; this is with spaces
+Return
+
+^i::
+SendInput Trade In - Call %A_MM%/%A_DD% ; this is with spaces
+Return
+
+:*:zxq4td::
+(
+Hello! It's Josh from Tesla. I have great news, we have started offering Model 3 and Y drives in your area again! If you're still interested in driving please let me know so we can get you on the schedule for a drive. Looking forward to hearing from you! 
+)
+
+:*:zxfundtext::
+(
+Hi ___, congratulations on your Model __ order! I know you will love it. I have just sent an email containing important information regarding your order to: _____ Please review this information at your earliest convenience and don't hesitate to reach out with any questions. (You may have already completed some of the steps requested.) You can reach us via this text or by responding to that email. Have a great day! 
+)
+
+:*:zxengage::
+(
+Hi ___, it's Josh from Tesla. I hope you and your family have been enjoying this holiday season. A while back you expressed interest in Tesla ownership, but we were unable to touch base about your next steps. Are you still considering Tesla ownership at this time? We're here to answer any questions you have! 
+) 
+
+:*:zxmidels::
+(
+Tesla | Michigan Delivery Requirements
+)
+
+:*:zxmidele::
+(
+Congratulations on your Tesla order! We can’t wait to get your new car delivered to you! To ensure your registration in Michigan can be completed, please review the following information to learn about the State of Michigan’s vehicle delivery requirements. 
+
+Purchase: The vehicle must be paid for in full prior to being shipped into the State of Michigan. Funding is required from you within 72 hours of receiving your VIN. You will be alerted when your VIN is provided. You will have 3 days to take delivery once your vehicle arrives in-state. 
+
+Leasing: A leased Tesla cannot be delivered to you in the State of Michigan. Lease deliveries can instead be scheduled for pick up in Cleveland, Chicago, or Indianapolis. 
+
+Please let us know if you have any questions. 
+
+Thank You, 
+
+Josh | Senior Advisor  
+Lyndhurst, OH
+)
+
+:*:zxmissingprofile::
+(
+Hi __, it's Josh from Tesla. I'm reaching out because we're missing several pieces of information necessary to complete your Model __ order. Please log into your Tesla account and fill out the remaining steps after clicking "manage" next to your order. Please text back to this thread if you have any questions! 
+)
+
+:*:zxty::
+(
+Thank you and congratulations on your Model __! - Josh 
+)
+
+:*:zxsentvin::
+(
+Thank you. I have updated your trade & you can now log into your Tesla account to complete your Trade-In step. You will receive your offer after this is completed. Let us know if you have any questions! - Josh 
+)
+ 
+:*:zxaddreg::
+(
+Hello ___, 
+
+In order to add a registrant we need the following information. 
+
+1. Full name
+
+2. Email address (cannot be the one used to place the order - ___)
+
+3. Picture of front/back of driver's license (please include as an attachment)
+
+Once we have that information we can update the registration. 
+
+) 
+
+:*:zxaccountchange::
+(
+Hi ___,
+
+Thank you for contacting Tesla. To proceed with updating your account email address, please reply confirming your request and include a color copy or photo of your driver's license.
+
+Current account email address: ___
+Requested account email address: ___
+
+Once we receive your email confirmation, please allow up to 72 hours for the change to be made. 
+)
+
+:*:zxnoreg::
+(
+Hello! It’s Josh from Tesla. Please log into your Tesla.com account to complete your delivery location and registration. We need this information in order to ensure your VIN is assigned properly when that time comes. Please note that depending on your registration State you may be subject to some delivery location restrictions. 
+)
+
+:*:zxmvpa::
+(
+Motor Vehicle Purchase Agreement
+)
+
+:*:zxdelay::
+(
+Hello ___, unfortunately with supply chain constraints we are seeing delivery estimates shift more than normal. Our goal is always to get you your Tesla as quickly as possible, so we will continue to do everything in our power to do just that. Your patience is greatly appreciated. - Josh
+)
+
+:*:zxopseod::
+(
+Open OCs: _
+# Of IB Calls Taken: _
+Actionable Profiles Contacted?: _
+Funding Completed: _ 
+)
+
+:*:zxm3inv::
+(
+https://www.tesla.com/inventory/new/m3
+)
+
+:*:zxmyinv::
+(
+https://www.tesla.com/inventory/new/my
+)
+
+:*:zxmsinv::
+(
+https://www.tesla.com/inventory/new/ms
+)
+
+:*:zxmxinv::
+(
+https://www.tesla.com/inventory/new/mx
+)
+
+:*:zxconfigeddchange::
+(
+Hi __, although configuration does play a role in VIN assignment, we cannot guarantee any specific timeline should you choose to change your design. Our recommendation always remains to have your order placed as your preferred configuration instead of choosing one simply based on potential timelines. - Josh 
+)
+
+:*:zxcanyoucallme::
+(
+I'd be happy to see if we can have someone reach out. If you do prefer to talk over the phone you can try giving us a call at 1-888-518-3752, however we are experiencing high call volume at this time. We may also be able to assist faster via text. Is there something specific you need assistance with? – Josh 
+)
+
+:*:zxeddaccurate::
+(
+The date range in your account is the most accurate we can provide at this time. Once a VIN is assigned we can speak to more specific dates. If manufacturing availability shifts, your estimated delivery date may change as well, which will be reflected in your account. When a VIN is assigned to your order you will be notified via text. – Josh 
+)
+
+:*:zxcalibrate::
+(
+Hello ___, this is Josh with Tesla service. Sounds like the window has lost calibration. Please try this procedure and let us know if it resolves your concern. 1.Enter the vehicle and close the door. 2.Lower the window fully, and continue to hold the window switch down for 2 seconds after the window stops. 3.Raise the window fully, and continue to hold the window switch up for 5 seconds after the window stops. 4.Press the window switch down to the second position to activate the auto-lower function. If the window lowers completely, the regulator is properly calibrated. Please let us know if this helps, thanks!
+)
+
+:*:zxknownfirmware::
+(
+Hello, this is the Tesla Virtual Service team. We have looked into your concern and were able to verify that what you are experiencing is a known characteristic of the current firmware package and not the result of any faulted hardware. Our engineering team is currently working on rectification that when ready will be released in the form of a free over-the-air update. At this time, because no technician is needed on-site (fix will be over-the-air), we would like to document and close out your appointment. Thank you and have a great day.
+)
+
+:*:zxsaptemail::
+(
+Hello,
+
+I have been reaching out to you via the mobile app.
+
+When you have a moment can  you please review your message center in the app?
+
+There are some things we are trying to connect with you on.
+
+Service < click on upcoming appointment < look for the message bubble in the bottom right corner of the screen and click.
+
+Here is a quick video as well, https://www.tesla.com/support/videos/watch/service-tesla-app
+
+Please note this email is not monitored.
+
+Please do not respond to this email as I will not likely get the reply.
+)
+
+:*:zxsaptsubject::
+(
+Tesla | Action Required - Upcoming Service
+)
+
+:*:zxtr::
+(
+Hello, this is the Tesla service team. One of our technicians will be reviewing your appointment soon. If they have any questions they will reach out in this thread or give you a call. 
+)
+
+:*:zxtireonly::
+(
+Hello ___, it's Josh from Tesla service. We're working on preparing for your upcoming appointment and all that populated on our end was getting your tires checked out. Is there anything else you want addressed during this visit?
+)
+
+:*:zxtimestamp::
+(
+Hello ___, to start remotely diagnosing your vehicle we need some additional information, please provide us with the most recent date and time of when you last drove the car and experienced this issue. This way we can check the vehicle vitals to see what is going on. Please refrain from using "all the time" or "every time" as we do not know when you last drove the car. As an example: 8th at 10:53am, once we have this information we can start remotely diagnosing your concern, and decide what next steps are needed. Thank you - Josh 
+)
+
+:*:zxnoreply::
+(
+Hello ___, it looks like you read our previous message but were unable to reply at that time. Without the information requested we will not be able to properly prepare for your visit, which could cause delays throughout the process. Please reply back to this thread with the information requested. 
+)
+
+:*:zxnvhdiag::
+(
+Ride along to confirm concern, advise on repair plan following onsite diag 
+)
+
+:*:zxnomobile::
+(
+Hello ___, due to the nature of your concern, we will need to have you come onsite for your appointment. If you need to adjust the date and time currently selected, you can do so through the app.
+)
+
+:*:zxgomobile::
+(
+Hello ___, great news! After reviewing your appointment we confirmed your visit is mobile capable so we will be sending someone to you! If you need to adjust the date and time currently selected you can do so in the app. 
+)
+
+:*:zxmobileoffer::
+(
+Hello ___! Congratulations, we've validated that your concern qualifies for Tesla Mobile Service, where we come to you! This means we can go to your location to perform the work, and you would not have to come in to our service center. If this is something that interests you, please change via the Tesla Mobile App's "manage appointment" button. Thank you! 
+)
