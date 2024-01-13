@@ -1,0 +1,27 @@
+}
+
+GarageSearch(x) ; GarageSearch
+
+{
+Run, https://garage.vn.teslamotors.com/vehicles/%x%
+Return
+}
+
+^+G::  
+
+{
+BlockInput, On                       
+ prevClipboard = %clipboard%         
+ clipboard =                         
+ Send, ^c                            
+ BlockInput, Off                    
+ ClipWait, 2
+If ErrorLevel = 0                   
+            {
+            searchQuery=%clipboard%        
+            GarageSearch(SearchQuery) 
+            }
+Clipboard = %prevClipboard%          
+ return
+
+}
